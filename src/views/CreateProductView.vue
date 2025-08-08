@@ -1,22 +1,21 @@
 <template>
   <div class="form-container">
-    <h1>{{ isEditing ? 'Editar Item' : 'Cadastrar Item' }}</h1>
-    <ProductForm :item-id="itemId" @saved="goToList" @cancel="goToList" />
+    <h1>{{ isEditing ? 'Editar Produto' : 'Cadastrar Produto' }}</h1>
+    <ProductForm :product-id="productId" @saved="goToList" @cancel="goToList" />
   </div>
 </template>
 
 <script setup lang="ts">
-
 import ProductForm from '@/components/ProductForm.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-const itemId = route.params.id || null
-const isEditing = !!itemId
+const productId = route.params.id as string || undefined
+const isEditing = !!productId
 
 function goToList() {
-  router.push('/items')
+  router.push('/products')
 }
 </script>
 

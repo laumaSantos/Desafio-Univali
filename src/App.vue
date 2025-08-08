@@ -21,6 +21,7 @@ import { RouterView } from 'vue-router'
   width: 100vw;
   min-height: 100vh;
   background-color: #f4f4f4;
-
+  align-items: center;
+  justify-content: center;
 }
 </style>

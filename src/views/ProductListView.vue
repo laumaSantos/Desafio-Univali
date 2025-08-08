@@ -1,11 +1,11 @@
 <template>
     <div class="list-container">
-        <h1 class="title">Produtos Cadastrados</h1>
-
-        <button @click="goToCreate" class="btn">
-            Adicionar Novo Produto
-        </button>
-
+        <div>
+            <h1 class="title">Produtos Cadastrados</h1>
+            <button @click="goToCreate" class="btn">
+                Adicionar Novo Produto
+            </button>
+        </div>
         <table v-if="products.length" class="product-table">
             <thead>
                 <tr>
@@ -29,7 +29,6 @@
                 </tr>
             </tbody>
         </table>
-
         <p v-else class="no-products">Nenhum produto cadastrado ainda.</p>
     </div>
 </template>
@@ -68,44 +67,88 @@ onMounted(loadProducts)
 
 <style scoped>
 .list-container {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding-left: 220px;
+    /* compensação do sidebar */
+}
+
+.list-container div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #09090b;
 }
 
 .btn {
-    background-color: #233568;
+    background-color: #114da6;
     color: white;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.5rem;
+    font-weight: 500;
     cursor: pointer;
-    margin-bottom: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #2563eb;
 }
 
 .product-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-.product-table th,
-.product-table td {
-    border: 1px solid #e5e7eb;
-    padding: 0.75rem;
+.product-table thead {
+    background-color: #f9fafb;
+}
+
+.product-table th {
     text-align: left;
+    padding: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4b5563;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.product-table td {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #1f2937;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.product-table tbody tr:hover {
+    background-color: #f9fafb;
 }
 
 .action-btn {
     margin-right: 0.5rem;
-    background-color: #e5e5e5;
+    background-color: #e5e7eb;
+    color: #111827;
     border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #d1d5db;
 }
 
 .action-btn.delete {
@@ -113,14 +156,13 @@ onMounted(loadProducts)
     color: white;
 }
 
+.action-btn.delete:hover {
+    background-color: #ef4444;
+}
+
 .no-products {
     margin-top: 1rem;
     font-style: italic;
-    color: #555;
-}
-
-td,
-th {
-    color: #09090b;
+    color: #6b7280;
 }
 </style>
