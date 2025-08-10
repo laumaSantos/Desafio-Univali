@@ -1,13 +1,10 @@
 <template>
     <form @submit="onSubmit" class="form-fields">
-        <!-- Nome -->
         <div>
             <label for="name">Nome do item:</label>
             <Field name="name" as="input" type="text" class="inputField" />
             <ErrorMessage name="name" class="error" />
         </div>
-
-        <!-- Unidade -->
         <div>
             <label for="unit">Unidade de Medida:</label>
             <Field name="unit" as="select" class="inputField">
@@ -18,36 +15,33 @@
             </Field>
             <ErrorMessage name="unit" class="error" />
         </div>
-
-        <!-- Quantidade -->
         <div>
             <label for="quantity">Quantidade:</label>
-            <Field name="quantity" as="input" type="number" step="0.001" class="inputField" />
+            <Field name="quantity" v-slot="{ field }">
+                <div class="input-with-addon">
+                    <input v-bind="field" id="quantity" type="number" inputmode="decimal" :min="0"
+                        :step="unit === 'Unidade' ? 1 : 0.001" class="inputField input-with-addon__input"
+                        :aria-describedby="unitSuffix ? 'quantity-addon' : undefined" />
+                    <span v-if="unitSuffix" id="quantity-addon" class="input-with-addon__addon">
+                        {{ unitSuffix }}
+                    </span>
+                </div>
+            </Field>
             <ErrorMessage name="quantity" class="error" />
         </div>
-
-        <!-- Preço -->
         <div>
-            <label for="price">Preço (R$):</label>
-            <Field name="price" as="input" type="text" class="inputField" />
-            <ErrorMessage name="price" class="error" />
+            <MoneyField />
         </div>
-
-        <!-- Perecível -->
         <div>
             <label for="perishable">Produto Perecível:</label>
             <Field name="perishable" as="input" type="checkbox" :value="true" />
             <ErrorMessage name="perishable" class="error" />
         </div>
-
-        <!-- Validade -->
         <div>
             <label for="expirationDate">Data de Validade:</label>
             <Field name="expirationDate" as="input" type="date" class="inputField" />
             <ErrorMessage name="expirationDate" class="error" />
         </div>
-
-        <!-- Fabricação -->
         <div>
             <label for="manufacturingDate">Data de Fabricação:</label>
             <Field name="manufacturingDate" as="input" type="date" class="inputField" />
@@ -62,11 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import { Field, ErrorMessage, useForm } from 'vee-validate'
+import { Field, ErrorMessage, useForm, useFieldValue } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { productSchema } from '@/utils/validationSchema'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { getProductById, getProducts, saveProducts } from '@/utils/localStorage'
+import MoneyField from './fields/MoneyField.vue'
 
 const props = defineProps({
     productId: {
@@ -83,6 +78,18 @@ const { handleSubmit, setValues, resetForm } = useForm({
         perishable: false,
     }
 })
+
+const unit = useFieldValue('unit')
+
+const unitSuffix = computed(() => {
+    switch (unit.value) {
+        case 'Litro': return 'Lt'
+        case 'Quilograma': return 'Kg'
+        case 'Unidade': return 'Un'
+        default: return ''
+    }
+})
+
 
 onMounted(() => {
     if (props.productId) {
@@ -107,9 +114,10 @@ const onSubmit = handleSubmit(values => {
 
 <style scoped>
 label {
-    font-size: 16px;
     margin-top: 10px;
-    color: #09090b;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b5563;
 }
 
 .inputField {
@@ -120,6 +128,7 @@ label {
     margin: 2px;
     font-size: 16px;
     border: 1px solid #e5e7eb;
+    color: #4b5563;
 }
 
 button {
@@ -146,5 +155,32 @@ button {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+}
+
+.input-with-addon {
+    position: relative;
+    width: 100%;
+    display: inline-block;
+}
+
+.input-with-addon__input {
+    width: 100%;
+    padding-right: 3rem;
+    /* espaço para o addon */
+}
+
+.input-with-addon__addon {
+    position: absolute;
+    right: .5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: #eef2f7;
+    font-size: .85rem;
+    line-height: 1;
+    color: #334155;
+    pointer-events: none;
+    /* não intercepta cliques */
 }
 </style>

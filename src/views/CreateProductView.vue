@@ -15,7 +15,7 @@ const productId = route.params.id as string || undefined
 const isEditing = !!productId
 
 function goToList() {
-  router.push('/products')
+  router.push('/')
 }
 </script>
 

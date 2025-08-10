@@ -1,65 +1,82 @@
 import { z } from 'zod'
 
-export const productSchema = z.object({
-  name: z
-    .string()
-    .nonempty('Campo obrigatório')
-    .max(50, 'Máximo de 50 caracteres')
-    .regex(/^[A-Za-z\s]+$/, 'Somente letras e espaços'),
+export const productSchema = z
+  .object({
+    name: z
+      .string({ required_error: 'Campo obrigatório' })
+      .min(1, 'Campo obrigatório')
+      .max(50, 'Máximo de 50 caracteres')
+      .regex(/^[A-Za-z\s]+$/, 'Somente letras e espaços'),
 
-  unit: z.enum(['Litro', 'Quilograma', 'Unidade'], {
-    error: 'Selecione uma unidade válida',
-  }),
+    unit: z.enum(['Litro', 'Quilograma', 'Unidade'], {
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Selecione uma unidade válida',
+    }),
 
-  quantity: z
-    .number()
-    .optional()
-    .refine(
-      (val, ctx) => {
-        const unit = ctx?.parent?.unit
-        if (!val || val === '') return true
+    quantity: z
+      .number({ invalid_type_error: 'Quantidade inválida' })
+      .optional()
+      .refine((val) => {
+        if (val === undefined || val === null) return true
+        return true
+      }, 'Quantidade inválida'),
 
-        if (unit === 'Unidade') return /^\d+$/.test(val)
-        return /^\d+(\.\d{1,3})?$/.test(val)
-      },
-      {
-        message: 'Quantidade inválida para a unidade selecionada',
-      },
-    ),
+    price: z.string({ required_error: 'Campo obrigatório' }).min(1, 'Campo obrigatório'),
+    perishable: z.boolean({
+      required_error: 'Campo obrigatório',
+      invalid_type_error: 'Campo obrigatório',
+    }),
 
-  price: z
-    .string()
-    .nonempty('Campo obrigatório')
-    .regex(/^\d+(,\d{2})?$/, 'Formato monetário inválido'),
-
-  perishable: z.boolean({
-    error: 'Campo obrigatório',
-  }),
-  expirationDate: z
-    .string()
-    .optional()
-    .refine(
-      (val, ctx) => {
-        if (!ctx?.parent?.perishable) return true
-        if (!val) return false
-        return new Date(val) > new Date()
-      },
-      {
-        message: 'Data inválida ou produto vencido',
-      },
-    ),
-
-  manufacturingDate: z
-    .string()
-    .nonempty('Campo obrigatório')
-    .refine(
-      (val, ctx) => {
-        const expiration = ctx?.parent?.expirationDate
-        if (!ctx?.parent?.perishable || !expiration) return true
-        return new Date(val) <= new Date(expiration)
-      },
-      {
-        message: 'Data de fabricação não pode ser posterior à validade',
-      },
-    ),
-})
+    expirationDate: z.string().optional(),
+    manufacturingDate: z
+      .string({ required_error: 'Campo obrigatório' })
+      .min(1, 'Campo obrigatório'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.perishable) {
+      if (!data.expirationDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['expirationDate'],
+          message: 'Campo obrigatório',
+        })
+      } else {
+        if (new Date(data.expirationDate) <= new Date()) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['expirationDate'],
+            message: 'Data inválida ou produto vencido',
+          })
+        }
+      }
+    }
+    if (data.perishable && data.expirationDate && data.manufacturingDate) {
+      if (new Date(data.manufacturingDate) > new Date(data.expirationDate)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['manufacturingDate'],
+          message: 'Data de fabricação não pode ser posterior à validade',
+        })
+      }
+    }
+    if (data.quantity !== undefined) {
+      const q = String(data.quantity)
+      if (data.unit === 'Unidade') {
+        if (!/^\d+$/.test(q)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['quantity'],
+            message: 'Quantidade inválida para a unidade selecionada',
+          })
+        }
+      } else {
+        if (!/^\d+(\.\d{1,3})?$/.test(q)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['quantity'],
+            message: 'Quantidade inválida para a unidade selecionada',
+          })
+        }
+      }
+    }
+  })

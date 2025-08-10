@@ -1,11 +1,17 @@
 <template>
-    <aside :class="['sidebar-container', { collapsed }]">
+    <aside v-if="!isMobile" :class="['sidebar-container', { collapsed }]">
         <button class="toggle-btn" @click="collapsed = !collapsed">
             <ChevronRight v-if="collapsed" class="icon" />
             <ChevronLeft v-else class="icon" />
         </button>
         <nav>
             <ul>
+                <li>
+                    <RouterLink to="/" :class="['nav-link', { collapsed }]" active-class="active">
+                        <Home class="icon" />
+                        <span v-if="!collapsed">Início</span>
+                    </RouterLink>
+                </li>
                 <li>
                     <RouterLink to="/products" :class="['nav-link', { collapsed }]" active-class="active">
                         <Box class="icon" />
@@ -20,19 +26,82 @@
                 </li>
             </ul>
         </nav>
+
     </aside>
+    <nav v-else class="mobile-navbar">
+        <RouterLink to="/" class="mobile-link" active-class="active">
+            <Home class="icon" />
+            <span>início</span>
+        </RouterLink>
+        <RouterLink to="/products" class="mobile-link" active-class="active">
+            <Box class="icon" />
+            <span>Produtos</span>
+        </RouterLink>
+        <RouterLink to="/products/new" class="mobile-link" active-class="active">
+            <Plus class="icon" />
+            <span>Criar</span>
+        </RouterLink>
+    </nav>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 
-import { Box, Plus, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Box, Plus, ChevronLeft, ChevronRight, Home } from 'lucide-vue-next'
 
 const collapsed = ref(false)
+const isMobile = ref(false)
+
+function handleResize() {
+    collapsed.value = window.innerWidth < 1020
+    isMobile.value = window.innerWidth < 770
+}
+
+onMounted(() => {
+    handleResize()
+    window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>
+.mobile-navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #114da6;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.5rem 0;
+    z-index: 2;
+    border-bottom: 1px solid #1e3a8a;
+}
+
+.mobile-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #e0e7ff;
+    text-decoration: none;
+    font-size: 0.75rem;
+}
+
+.mobile-link .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.mobile-link.active {
+    color: #ffffff;
+    font-weight: 600;
+}
+
 .sidebar-container {
     background-color: #114da6;
     color: white;

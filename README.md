@@ -1,39 +1,80 @@
-# desafioUnivali
+## desafioUnivali
 
-This template should help get you started developing with Vue 3 in Vite.
+Sistema de cadastro e listagem de produtos, desenvolvido em Vue 3 + Vite + TypeScript, com validação de formulários usando Zod + Vee-Validate e persistência de dados via LocalStorage.
 
-## Recommended IDE Setup
+## Tecnologias utilizadas
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Vue 3 — Framework JavaScript.
 
-## Type Support for `.vue` Imports in TS
+Vite — Ferramenta de build rápida.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+TypeScript — Tipagem estática.
 
-## Customize configuration
+Vue Router — Sistema de rotas.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Zod + Vee-Validate — Validação de formulários.
 
-## Project Setup
+Lucide Icons — Ícones modernos.
 
-```sh
+CSS puro — Estilização personalizada sem frameworks CSS externos.
+
+## Estrutura do projeto
+
+src/
+├── assets/ # Imagens, ícones e estilos globais
+├── components/ # Componentes reutilizáveis
+├── pages/ # Páginas da aplicação (Cadastro, Listagem, etc.)
+├── router/ # Configuração de rotas
+├── utils/ # Funções utilitárias e schemas de validação
+│ ├── localStorage.ts # Funções para salvar e recuperar produtos
+│ └── validationSchema.ts # Validações com Zod
+├── App.vue # Componente raiz
+└── main.ts # Ponto de entrada da aplicação
+
+## Funcionalidades
+
+✅ Cadastro de produtos com os campos:
+✅ Listagem de produtos
+✅ Edição e exclusão de produtos
+✅ Persistência no LocalStorage
+✅ Menu lateral colapsável e responsivo, com modo drawer no mobile
+
+## Instalação e execução
+
+# Instalar dependências
+
 npm install
-```
 
-### Compile and Hot-Reload for Development
+# Executar em ambiente de desenvolvimento
 
-```sh
 npm run dev
-```
 
-### Type-Check, Compile and Minify for Production
+# Build para produção
 
-```sh
 npm run build
-```
 
-### Lint with [ESLint](https://eslint.org/)
+# Lint do código
 
-```sh
 npm run lint
-```
+
+## Uso
+
+Acesse a tela de Cadastro de Produtos pelo menu lateral.
+
+Preencha todos os campos obrigatórios.
+
+Clique em Salvar:
+
+Se for um novo produto, ele será adicionado à listagem.
+
+Se estiver editando, as alterações serão salvas.
+
+Clique em Cancelar para voltar à listagem sem salvar alterações.
+
+## Observações
+
+Os dados são salvos apenas no LocalStorage do navegador.
+
+A máscara monetária e sufixos de unidade são aplicados via validação e formatação.
+
+As mensagens de erro são exibidas de forma clara, conforme os requisitos.

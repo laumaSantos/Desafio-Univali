@@ -6,60 +6,79 @@
                 Adicionar Novo Produto
             </button>
         </div>
-        <table v-if="products.length" class="product-table">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Unidade</th>
-                    <th>Quantidade</th>
-                    <th>Preço</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="product in products" :key="product.id">
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.unit }}</td>
-                    <td>{{ product.quantity }}</td>
-                    <td>R$ {{ product.price }}</td>
-                    <td>
-                        <button @click="edit(product.id)" class="action-btn">Editar</button>
-                        <button @click="confirmDelete(product.id)" class="action-btn delete">Excluir</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p v-else class="no-products">Nenhum produto cadastrado ainda.</p>
+
+        <div class="table-wrapper">
+            <table v-if="products.length" class="product-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Unidade</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="product in products" :key="product.id">
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.unit }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>R$ {{ product.price }}</td>
+                        <td>
+                            <button @click="edit(product.id)" class="action-btn">Editar</button>
+                            <button @click="askDelete(product.id)" class="action-btn delete">Excluir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p v-else class="no-products">Nenhum produto cadastrado ainda.</p>
+        </div>
+        <ConfirmModal v-model:open="showDeleteModal" title="Excluir produto"
+            :message="`Tem certeza que deseja excluir este produto? Essa ação não pode ser desfeita.`"
+            confirmText="Excluir" cancelText="Cancelar" @confirm="onConfirmDelete" @cancel="onCancelDelete" />
     </div>
 </template>
+
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getProducts, removeProduct } from '@/utils/localStorage'
 import type { Product } from '@/utils/types'
+import ConfirmModal from '@/components/ConfirmModal.vue'
 
 const router = useRouter()
 const products = ref<Product[]>([])
+const showDeleteModal = ref(false)
+const pendingDeleteId = ref<string | null>(null)
 
 function loadProducts() {
     products.value = getProducts()
 }
 
 function goToCreate() {
-    router.push('/products/new')
+    router.push('/products')
 }
 
 function edit(id: string) {
     router.push(`/products/${id}`)
 }
 
-function confirmDelete(id: string) {
-    if (confirm('Deseja realmente excluir este produto?')) {
-        removeProduct(id)
-        loadProducts()
-        alert('Produto excluído com sucesso!')
-    }
+function askDelete(id: string) {
+    pendingDeleteId.value = id
+    showDeleteModal.value = true
+}
+
+function onConfirmDelete() {
+    if (!pendingDeleteId.value) return
+    removeProduct(pendingDeleteId.value)
+    loadProducts()
+    pendingDeleteId.value = null
+    alert('Produto excluído com sucesso!')
+}
+
+function onCancelDelete() {
+    pendingDeleteId.value = null
 }
 
 onMounted(loadProducts)
@@ -67,10 +86,9 @@ onMounted(loadProducts)
 
 <style scoped>
 .list-container {
-    max-width: 1000px;
+    max-width: 1100px;
     margin: 2rem auto;
     padding-left: 220px;
-    /* compensação do sidebar */
 }
 
 .list-container div {
@@ -101,8 +119,14 @@ onMounted(loadProducts)
     background-color: #2563eb;
 }
 
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 0.5rem;
+}
+
 .product-table {
     width: 100%;
+    min-width: 600px;
     border-collapse: collapse;
     background-color: white;
     border-radius: 0.5rem;
@@ -117,7 +141,7 @@ onMounted(loadProducts)
 .product-table th {
     text-align: left;
     padding: 1rem;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 600;
     color: #4b5563;
     border-bottom: 1px solid #e5e7eb;
@@ -164,5 +188,41 @@ onMounted(loadProducts)
     margin-top: 1rem;
     font-style: italic;
     color: #6b7280;
+}
+
+@media (max-width: 1020px) {
+    .list-container {
+        padding-left: 5rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (max-width: 760px) {
+    .list-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .list-container div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .action-btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
 }
 </style>
