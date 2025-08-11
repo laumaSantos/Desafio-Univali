@@ -2,7 +2,7 @@
     <div class="list-container">
         <div>
             <h1 class="title">Produtos Cadastrados</h1>
-            <button @click="goToCreate" class="btn">
+            <button @click="goToCreate" class="form-button">
                 Adicionar Novo Produto
             </button>
         </div>
@@ -15,6 +15,9 @@
                         <th>Unidade</th>
                         <th>Quantidade</th>
                         <th>Preço</th>
+                        <th>Produto Perecível</th>
+                        <th>Data de Fabricação</th>
+                        <th>Data de Validade</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -23,20 +26,27 @@
                         <td>{{ product.name }}</td>
                         <td>{{ product.unit }}</td>
                         <td>{{ product.quantity }}</td>
-                        <td>R$ {{ product.price }}</td>
+                        <td>{{ product.price }}</td>
+                        <td class="text-center">
+                            <CheckCircle v-if="product.perishable" class="check-icon" />
+                            <XCircle v-else class="x-icon" />
+                        </td>
+                        <td>{{ formatDate(product.manufacturingDate) || 'N/A' }}</td>
+                        <td>{{ formatDate(product.expirationDate) || 'N/A' }}</td>
                         <td>
-                            <button @click="edit(product.id)" class="action-btn">Editar</button>
-                            <button @click="askDelete(product.id)" class="action-btn delete">Excluir</button>
+                            <button @click="edit(product.id)" class="action-button">Editar</button>
+                            <button @click="askDelete(product.id)" class="action-button delete">Excluir</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <p v-else class="no-products">Nenhum produto cadastrado ainda.</p>
         </div>
-        <ConfirmModal v-model:open="showDeleteModal" title="Excluir produto"
-            :message="`Tem certeza que deseja excluir este produto? Essa ação não pode ser desfeita.`"
-            confirmText="Excluir" cancelText="Cancelar" @confirm="onConfirmDelete" @cancel="onCancelDelete" />
     </div>
+    <ConfirmModal v-model:open="showDeleteModal" title="Excluir produto"
+        :message="`Tem certeza que deseja excluir este produto? Essa ação não pode ser desfeita.`" confirmText="Excluir"
+        cancelText="Cancelar" @confirm="onConfirmDelete" @cancel="onCancelDelete" />
+    <Toast ref="toastRef" />
 </template>
 
 
@@ -46,18 +56,22 @@ import { useRouter } from 'vue-router'
 import { getProducts, removeProduct } from '@/utils/localStorage'
 import type { Product } from '@/utils/types'
 import ConfirmModal from '@/components/ConfirmModal.vue'
+import Toast from '@/components/personalizedToast.vue'
+import { CheckCircle, XCircle } from 'lucide-vue-next'
+import { formatDate } from '@/utils/formatDate'
 
 const router = useRouter()
 const products = ref<Product[]>([])
 const showDeleteModal = ref(false)
 const pendingDeleteId = ref<string | null>(null)
+const toastRef = ref()
 
 function loadProducts() {
     products.value = getProducts()
 }
 
 function goToCreate() {
-    router.push('/products')
+    router.push('/products/new')
 }
 
 function edit(id: string) {
@@ -74,19 +88,20 @@ function onConfirmDelete() {
     removeProduct(pendingDeleteId.value)
     loadProducts()
     pendingDeleteId.value = null
-    alert('Produto excluído com sucesso!')
+    toastRef.value?.show('Produto excluído com sucesso!')
 }
 
 function onCancelDelete() {
     pendingDeleteId.value = null
 }
 
+
 onMounted(loadProducts)
 </script>
 
 <style scoped>
 .list-container {
-    max-width: 1100px;
+    max-width: 1400px;
     margin: 2rem auto;
     padding-left: 220px;
 }
@@ -99,14 +114,12 @@ onMounted(loadProducts)
 }
 
 .title {
-    font-size: 1.75rem;
-    font-weight: 600;
     color: #09090b;
 }
 
-.btn {
-    background-color: #114da6;
-    color: white;
+.form-button {
+    background: var(--blue-7);
+    color: var(--vt-c-white);
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 0.5rem;
@@ -115,7 +128,7 @@ onMounted(loadProducts)
     transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+.form-button:hover {
     background-color: #2563eb;
 }
 
@@ -158,36 +171,62 @@ onMounted(loadProducts)
     background-color: #f9fafb;
 }
 
-.action-btn {
+.action-button {
     margin-right: 0.5rem;
     background-color: #e5e7eb;
     color: #111827;
     border: none;
     padding: 0.4rem 0.75rem;
+    margin-top: 2px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    transition: background-color 0.2s ease;
+    width: 70px;
 }
 
-.action-btn:hover {
+.action-button:hover {
     background-color: #d1d5db;
 }
 
-.action-btn.delete {
+.action-button.delete {
     background-color: #f87171;
     color: white;
 }
 
-.action-btn.delete:hover {
+.action-button.delete:hover {
     background-color: #ef4444;
 }
 
 .no-products {
     margin-top: 1rem;
-    font-style: italic;
     color: #6b7280;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.check-icon,
+.x-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #10b981;
+}
+
+.check-icon {
+    color: #10b981;
+}
+
+.x-icon {
+    color: #ef4444;
+}
+
+@media (max-width: 1420px) {
+    .list-container {
+        padding-left: 15rem;
+        padding-right: 1rem;
+    }
 }
 
 @media (max-width: 1020px) {
@@ -209,7 +248,7 @@ onMounted(loadProducts)
         gap: 0.75rem;
     }
 
-    .btn {
+    .form-button {
         width: 100%;
         text-align: center;
     }
@@ -220,7 +259,7 @@ onMounted(loadProducts)
         font-size: 0.8rem;
     }
 
-    .action-btn {
+    .action-button {
         font-size: 0.75rem;
         padding: 0.3rem 0.6rem;
     }

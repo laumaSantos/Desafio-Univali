@@ -38,19 +38,19 @@
             <ErrorMessage name="perishable" class="error" />
         </div>
         <div>
-            <label for="expirationDate">Data de Validade:</label>
-            <Field name="expirationDate" as="input" type="date" class="inputField" />
-            <ErrorMessage name="expirationDate" class="error" />
-        </div>
-        <div>
             <label for="manufacturingDate">Data de Fabricação:</label>
             <Field name="manufacturingDate" as="input" type="date" class="inputField" />
             <ErrorMessage name="manufacturingDate" class="error" />
         </div>
+        <div>
+            <label for="expirationDate">Data de Validade:</label>
+            <Field name="expirationDate" as="input" type="date" class="inputField" />
+            <ErrorMessage name="expirationDate" class="error" />
+        </div>
 
-        <div class="buttons">
-            <button type="submit">Salvar</button>
+        <div class="container-buttons">
             <button type="button" @click="$emit('cancel')">Cancelar</button>
+            <button type="submit">Salvar</button>
         </div>
     </form>
 </template>
@@ -61,7 +61,8 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { productSchema } from '@/utils/validationSchema'
 import { computed, onMounted } from 'vue'
 import { getProductById, getProducts, saveProducts } from '@/utils/localStorage'
-import MoneyField from './fields/MoneyField.vue'
+import MoneyField from '@/components/fields/MoneyField.vue'
+
 
 const props = defineProps({
     productId: {
@@ -126,7 +127,7 @@ label {
     width: 100%;
     border: none;
     margin: 2px;
-    font-size: 16px;
+    font-size: 14px;
     border: 1px solid #e5e7eb;
     color: #4b5563;
 }
@@ -140,10 +141,21 @@ button {
     font-size: 16px;
     font-weight: 700;
     border: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
 
-    @media (max-width:770px) {
-        width: 100%;
-    }
+button:hover {
+    background-color: #2563eb;
+}
+
+button[type="button"] {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+
+button[type="button"]:hover {
+    background-color: #d1d5db;
 }
 
 .error {
@@ -151,10 +163,11 @@ button {
     font-size: 0.875rem;
 }
 
-.buttons {
+.container-buttons {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    justify-content: flex-end;
 }
 
 .input-with-addon {
@@ -166,7 +179,6 @@ button {
 .input-with-addon__input {
     width: 100%;
     padding-right: 3rem;
-    /* espaço para o addon */
 }
 
 .input-with-addon__addon {
@@ -181,6 +193,12 @@ button {
     line-height: 1;
     color: #334155;
     pointer-events: none;
-    /* não intercepta cliques */
+}
+
+@media (max-width:770px) {
+    button {
+        width: 100%;
+        padding: 10px;
+    }
 }
 </style>

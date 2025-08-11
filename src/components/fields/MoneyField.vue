@@ -45,7 +45,7 @@ label {
     width: 100%;
     border: none;
     margin: 2px;
-    font-size: 16px;
+    font-size: 14px;
     border: 1px solid #e5e7eb;
     color: #4b5563;
 }

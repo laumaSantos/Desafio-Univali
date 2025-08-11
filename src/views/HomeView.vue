@@ -1,5 +1,5 @@
 <template>
-  <div class="containerInformation">
+  <div class="container-information">
     <h1>O que você deseja fazer?</h1>
     <div>
       <router-link to="/products" class="card-link">
@@ -25,7 +25,7 @@ import { Box, Plus } from 'lucide-vue-next'
   font-size: initial;
 }
 
-.containerInformation {
+.container-information {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,7 +33,7 @@ import { Box, Plus } from 'lucide-vue-next'
   margin-top: 50px;
 }
 
-.containerInformation div {
+.container-information div {
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -57,5 +57,18 @@ import { Box, Plus } from 'lucide-vue-next'
   align-items: center;
   text-decoration: none;
   text-align: center;
+}
+
+@media(max-width: 600px) {
+  .container-information div {
+    flex-direction: column;
+  }
+
+  .card-link {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    margin-top: 20px;
+  }
 }
 </style>

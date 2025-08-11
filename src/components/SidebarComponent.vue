@@ -69,6 +69,25 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.sidebar-container .nav-link.active {
+    background-color: #3b82f6;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Mobile (navbar): só muda a cor do texto */
+.mobile-navbar .mobile-link.active {
+    background: transparent;
+    /* garante que não pinte o fundo */
+    color: gray;
+    font-weight: 700;
+}
+
+.sidebar-container .nav-link:not(.active):hover {
+    background-color: #3b61d1;
+    color: #ffffff;
+}
+
 .mobile-navbar {
     position: fixed;
     bottom: 0;
@@ -145,11 +164,10 @@ ul {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1.5rem;
     color: #e0e7ff;
     font-weight: 500;
     text-decoration: none;
-
 }
 
 .nav-link.collapsed {
@@ -161,11 +179,7 @@ ul {
     color: #ffffff;
 }
 
-.active {
-    background-color: #3b82f6;
-    color: white;
-    font-weight: 600;
-}
+
 
 .icon {
     width: 20px;

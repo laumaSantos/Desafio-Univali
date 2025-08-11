@@ -22,10 +22,13 @@ export const productSchema = z
       }, 'Quantidade inválida'),
 
     price: z.string({ required_error: 'Campo obrigatório' }).min(1, 'Campo obrigatório'),
-    perishable: z.boolean({
-      required_error: 'Campo obrigatório',
-      invalid_type_error: 'Campo obrigatório',
-    }),
+    perishable: z
+      .boolean({
+        required_error: 'Campo obrigatório',
+        invalid_type_error: 'Campo obrigatório',
+        coerce: true,
+      })
+      .default(false),
 
     expirationDate: z.string().optional(),
     manufacturingDate: z

@@ -11,10 +11,10 @@
             </p>
 
             <footer class="modal-actions">
-                <button type="button" class="btn-cancel" @click="handleCancel">
+                <button type="button" class="button-cancel" @click="handleCancel">
                     {{ cancelText }}
                 </button>
-                <button type="button" class="btn-confirm" @click="handleConfirm" autofocus>
+                <button type="button" class="button-confirm" @click="handleConfirm" autofocus>
                     {{ confirmText }}
                 </button>
             </footer>
@@ -73,7 +73,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2;
 }
 
 .modal-card {
@@ -91,7 +91,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 .modal-title {
     margin: 0;
-    font-size: 1.1rem;
     color: #0f172a;
 }
 
@@ -106,7 +105,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     gap: .5rem;
 }
 
-.btn-cancel {
+.button-cancel {
     background: #e5e7eb;
     color: #111827;
     border: none;
@@ -115,11 +114,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     cursor: pointer;
 }
 
-.btn-cancel:hover {
+.button-cancel:hover {
     background: #d1d5db;
 }
 
-.btn-confirm {
+.button-confirm {
     background: #114da6;
     color: #fff;
     border: none;
@@ -128,7 +127,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     cursor: pointer;
 }
 
-.btn-confirm:hover {
+.button-confirm:hover {
     background: #2563eb;
 }
 
