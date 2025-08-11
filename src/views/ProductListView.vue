@@ -56,7 +56,7 @@ import { useRouter } from 'vue-router'
 import { getProducts, removeProduct } from '@/utils/localStorage'
 import type { Product } from '@/utils/types'
 import ConfirmModal from '@/components/ConfirmModal.vue'
-import Toast from '@/components/personalizedToast.vue'
+import Toast from '@/components/PersonalizedToast.vue'
 import { CheckCircle, XCircle } from 'lucide-vue-next'
 import { formatDate } from '@/utils/formatDate'
 

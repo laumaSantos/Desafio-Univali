@@ -12,7 +12,7 @@
 import Sidebar from '@/components/SidebarComponent.vue'
 import { RouterView } from 'vue-router'
 import { ref, provide } from 'vue'
-import Toast from '@/components/personalizedToast.vue'
+import Toast from '@/components/PersonalizedToast.vue'
 
 type ToastExposed = { show: (msg: string) => void }
 const toastRef = ref<ToastExposed | null>(null)

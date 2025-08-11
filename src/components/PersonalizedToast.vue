@@ -38,7 +38,6 @@ defineExpose({ show })
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-size: 0.9rem;
-    animation: slide-up 0.3s ease-out;
 }
 
 @keyframes slide-up {

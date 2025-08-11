@@ -75,10 +75,8 @@ onUnmounted(() => {
     font-weight: 600;
 }
 
-/* Mobile (navbar): só muda a cor do texto */
 .mobile-navbar .mobile-link.active {
     background: transparent;
-    /* garante que não pinte o fundo */
     color: gray;
     font-weight: 700;
 }
